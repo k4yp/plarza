@@ -1,3 +1,4 @@
+from flask import Flask
 from instagram import instagram
 from twitter import twitter
 from youtube import youtube
@@ -13,3 +14,9 @@ sorted_posts = sorted(all_posts, key=lambda d: d['date'], reverse=True)
 
 for post in sorted_posts:
     print(post['source'],post['date'],post['caption'],post['media'],post['link'])
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello_world():
+    return f"<p>{sorted_posts[0]}</p>"

@@ -1,8 +1,7 @@
 import requests
 from datetime import datetime
 
-COLOR = '\033[92m'
-END = '\033[0m'
+results = []
 
 def twitter(user_name, count, token):
 
@@ -17,14 +16,16 @@ def twitter(user_name, count, token):
         DATE_RAW = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['created_at']
         DATE = int(datetime.strptime(DATE_RAW, "%a %b %d %H:%M:%S %z %Y").timestamp())
 
-        CAPTION_CONTENT = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['full_text']
+        CAPTION = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['full_text']
         
         try:
-            MEDIA_PREVIEW_URL = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['entities']['media'][1]['media_url_https']
+            MEDIA = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['entities']['media'][1]['media_url_https']
         except:
-            MEDIA_PREVIEW_URL = None
+            MEDIA = None
 
         LINK_RAW = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['conversation_id_str']
         LINK = f'https://twitter.com/{user_name}/status/{LINK_RAW}'
 
-        print(f'{COLOR}SOURCE:{END}\nTWITTER\n{COLOR}DATE:{END}\n{DATE}\n{COLOR}CAPTION:{END}\n{CAPTION_CONTENT}\n{COLOR}MEDIA PREVIEW:{END}\n{MEDIA_PREVIEW_URL}\n{COLOR}LINK:{END}\n{LINK}\n')
+        results.append({'source':'twitter','date':DATE,'caption':CAPTION,'media':MEDIA,'link':LINK})
+
+    return results

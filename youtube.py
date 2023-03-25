@@ -24,6 +24,6 @@ def youtube(user_name, count):
 
         LINK = res_formatted['feed']['entry'][i]['link']['@href']
         
-        results.append({'source':'youtube','date':DATE,'caption':CAPTION,'media':MEDIA,'link':LINK})
+        results.append({'source':'yt','date':DATE,'caption':CAPTION,'media':MEDIA,'link':LINK})
        
     return results

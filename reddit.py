@@ -1,7 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 
-COLOR = '\033[92m'
-END = '\033[0m'
-
 results = []
+
+def reddit(user_name, count):
+
+    url = f'https://reddit.com/user/{user_name}'
+    response = requests.request('GET', url).json()
+    print (response)
+
+reddit('the-real-bob',2)

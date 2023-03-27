@@ -13,19 +13,22 @@ def twitter(user_name, count, token):
     response = requests.get(url, headers={'authorization': token}).json()
 
     for i in range(count):
-        DATE_RAW = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['created_at']
-        DATE = int(datetime.strptime(DATE_RAW, "%a %b %d %H:%M:%S %z %Y").timestamp())
-
-        CAPTION = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['full_text']
-        
         try:
-            MEDIA = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['entities']['media'][1]['media_url_https']
+            response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['entities']['user_mentions'][0]['name']
         except:
-            MEDIA = None
+            DATE_RAW = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['created_at']
+            DATE = int(datetime.strptime(DATE_RAW, "%a %b %d %H:%M:%S %z %Y").timestamp())
 
-        LINK_RAW = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['conversation_id_str']
-        LINK = f'https://twitter.com/{user_name}/status/{LINK_RAW}'
+            CAPTION = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['full_text']
+            
+            try:
+                MEDIA = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['entities']['media'][1]['media_url_https']
+            except:
+                MEDIA = None
 
-        results.append({'source':'twitter','date':DATE,'caption':CAPTION,'media':MEDIA,'link':LINK})
+            LINK_RAW = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['conversation_id_str']
+            LINK = f'https://twitter.com/{user_name}/status/{LINK_RAW}'
+
+            results.append({'user':user_name,'source':'twitter','date':DATE,'caption':CAPTION,'media':MEDIA,'link':LINK})
 
     return results

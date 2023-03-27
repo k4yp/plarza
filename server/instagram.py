@@ -17,6 +17,6 @@ def instagram(user_name, count, token):
         LINK_RAW = res['graphql']['user']['edge_owner_to_timeline_media']['edges'][i]['node']['shortcode']
         LINK = f'https://www.instagram.com/p/{LINK_RAW}/'
 
-        results.append({'source':'ig','date':DATE,'caption':CAPTION,'media':MEDIA,'link':LINK})
+        results.append({'user':user_name,'source':'instagram','date':DATE,'caption':CAPTION,'media':MEDIA,'link':LINK})
 
     return results

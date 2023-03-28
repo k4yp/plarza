@@ -2,28 +2,34 @@
     /**
      * @type {any[]}
      */
-
+  
     let posts = [];
   
-    const loadPosts = async () => {
-      const response = await fetch('http://localhost:5500/server/data.csv');
-      const data = await response.text();
-      const rows = data.split('\n');
+    var query = "SELECT * FROM posts ORDER BY date DESC;";
   
-      rows.forEach((row) => {
-        const [user, source, date, caption, media, link] = row.split('•');
-        posts.push({ user, source, date, caption, media, link });
-      });
-      posts = posts.slice(1);
+    var requestParams = {
+      method: 'POST',
+      headers: {
+        "Accept": "application/json",
+        "NS": "test",
+        "DB": "test",
+        "Content-Type": "application/json",
+        "Authorization": "Basic cm9vdDpyb290"
+      },
+      body: query,
     };
-    
+  
+    const loadPosts = async () => {
+        const response = await fetch('http://localhost:8000/sql', requestParams)
+        const data = await response.json();
+        posts = data[0]['result']
+    }
+  
     import { onMount } from 'svelte';
   
     onMount(loadPosts);
-
-    console.log(posts)
   </script>
-
+  
 <div class="posts">
     {#each posts as post}
     <div class="post">

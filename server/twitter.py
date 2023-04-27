@@ -29,6 +29,6 @@ def twitter(user_name, count, token):
             LINK_RAW = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['conversation_id_str']
             LINK = f'https://twitter.com/{user_name}/status/{LINK_RAW}'
 
-            results.append({'user':user_name,'source':'twitter','date':DATE,'caption':CAPTION,'media':MEDIA,'link':LINK})
+            results.append({'user':user_name,'source':'twitter','date':DATE,'caption':CAPTION.replace("'","''"),'media':MEDIA,'link':LINK})
 
     return results

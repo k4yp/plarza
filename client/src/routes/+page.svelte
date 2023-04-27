@@ -4,25 +4,10 @@
      */
   
     let posts = [];
-  
-    var query = "SELECT * FROM posts ORDER BY date DESC;";
-  
-    var requestParams = {
-      method: 'POST',
-      headers: {
-        "Accept": "application/json",
-        "NS": "test",
-        "DB": "test",
-        "Content-Type": "application/json",
-        "Authorization": "Basic cm9vdDpyb290"
-      },
-      body: query,
-    };
-  
+
     const loadPosts = async () => {
-        const response = await fetch('http://localhost:8000/sql', requestParams)
-        const data = await response.json();
-        posts = data[0]['result']
+        const response = await fetch('http://127.0.0.1:5000/posts')
+        posts = await response.json()
     }
   
     import { onMount } from 'svelte';
@@ -53,18 +38,22 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 .post {
-    border-top: 1px solid;
-    border-left: 1px solid;
-    border-right: 1px solid;
-    border-color: rgb(217, 217, 217);
+    background-color: aliceblue;
     margin: auto;
     padding: 16px;
-    width: 30%;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    border-radius: 16px;
+    width: 35%;
+    min-width: 500px;
 }
 a {
     display: block;
     text-decoration: none;
     color: inherit;
+}
+p{
+    margin: 0;
 }
 .user:hover {
     text-decoration: underline;
@@ -85,5 +74,10 @@ a {
 }
 .user {
     padding-right: 10px;
+}
+.caption{
+    padding-top: 16px;
+    padding-bottom: 16px;
+    margin: 0;
 }
 </style>

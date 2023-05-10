@@ -1,21 +1,32 @@
-## client
+# Plarza
 
-first cd into client folder
+#### Dead simple social media aggregator
 
-### install
+## Client
 
-`npm i`
+**Install**
 
-### run
+```bash
+$ cd client
+$ npm i
+```
 
-`npm run dev -- --open`
+**Run**
 
-## database
+```bash
+$ npm run dev -- --open
+```
 
-### install
+## Server
 
-`curl -sSf https://install.surrealdb.com | sh`
+**Install**
 
-### run
+```bash
+$ pip install -r requirements.txt
+```
 
-`surreal start file:///./db --user root --pass root`
+**Run**
+
+```bash
+flask run --debug
+```

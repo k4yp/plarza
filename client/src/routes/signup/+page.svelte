@@ -2,14 +2,31 @@
     let email = '';
     let password = '';
   
-    function handleSubmit() {
-      console.log('email:', email);
-      console.log('password:', password);
+    const signup = async () => {
+        await fetch('http://127.0.0.1:5000/signup',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                email:email,
+                password:password
+            })
+        })
+        .then((res) => {
+            if(res.status === 200){
+                window.location.href = '/';
+                return res.json()
+            }
+            else{
+                throw new Error('Unable to sign up')
+            }
+        })
     }
 </script>
 
 <div class="signup">
-    <form on:submit|preventDefault={handleSubmit}>
+    <form on:submit|preventDefault={signup}>
         <input type="email" placeholder="email" bind:value={email} required>
         <input type="password" placeholder="password" bind:value={password} required>
         <button type="submit">sign up</button>

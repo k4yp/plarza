@@ -1,14 +1,14 @@
 <script>
     import { onMount } from 'svelte';
 
-    let posts = [];
+    let posts = []
 
     const loadPosts = async () => {
         const response = await fetch('http://127.0.0.1:5000/posts')
         posts = await response.json()    
     }
 
-    onMount(loadPosts);
+    onMount(loadPosts)
 </script>
   
 <div class="posts">

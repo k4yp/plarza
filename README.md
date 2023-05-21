@@ -30,3 +30,10 @@ $ pip install -r requirements.txt
 ```bash
 flask run --debug
 ```
+
+## Database
+
+```bash
+psql -U postgres
+\c testdb
+```

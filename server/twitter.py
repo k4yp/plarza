@@ -22,13 +22,13 @@ def twitter(user_name, count, token):
             CAPTION = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['full_text']
             
             try:
-                MEDIA = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['entities']['media'][1]['media_url_https']
+                MEDIA_URL = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['entities']['media'][1]['media_url_https']
             except:
-                MEDIA = None
+                MEDIA_URL = None
 
             LINK_RAW = response['data']['user']['result']['timeline_v2']['timeline']['instructions'][1]['entries'][i]['content']['itemContent']['tweet_results']['result']['legacy']['conversation_id_str']
             LINK = f'https://twitter.com/{user_name}/status/{LINK_RAW}'
 
-            results.append({'user':user_name,'source':'twitter','date':DATE,'caption':CAPTION.replace("'","''"),'media':MEDIA,'link':LINK})
+            results.append({'user': user_name, 'source': 'twitter', 'date': DATE, 'caption': CAPTION.replace("'","''"), 'media_url': MEDIA_URL, 'link': LINK})
 
     return results

@@ -12,11 +12,11 @@ def instagram(user_name, count, token):
 
         CAPTION = res['graphql']['user']['edge_owner_to_timeline_media']['edges'][i]['node']['edge_media_to_caption']['edges'][0]['node']['text']
 
-        MEDIA = res['graphql']['user']['edge_owner_to_timeline_media']['edges'][i]['node']['display_url']
+        MEDIA_URL = res['graphql']['user']['edge_owner_to_timeline_media']['edges'][i]['node']['display_url']
 
         LINK_RAW = res['graphql']['user']['edge_owner_to_timeline_media']['edges'][i]['node']['shortcode']
         LINK = f'https://www.instagram.com/p/{LINK_RAW}/'
 
-        results.append({'user':user_name,'source':'instagram','date':DATE,'caption':CAPTION.replace("'","''"),'media':MEDIA,'link':LINK})
+        results.append({'user':user_name,'source':'instagram','date':DATE,'caption':CAPTION.replace("'","''"), 'media_url': MEDIA_URL,'link':LINK})
 
     return results

@@ -20,10 +20,10 @@ def youtube(user_name, count):
 
         CAPTION =  res_formatted['feed']['entry'][i]['title']
 
-        MEDIA = res_formatted['feed']['entry'][i]['media:group']['media:thumbnail']['@url']
+        MEDIA_URL = res_formatted['feed']['entry'][i]['media:group']['media:thumbnail']['@url']
 
         LINK = res_formatted['feed']['entry'][i]['link']['@href']
         
-        results.append({'user':user_name,'source':'youtube','date':DATE,'caption':CAPTION.replace("'","''"),'media':MEDIA,'link':LINK})
+        results.append({'user':user_name,'source':'youtube','date':DATE,'caption':CAPTION.replace("'","''"), 'media_url': MEDIA_URL,'link':LINK})
        
     return results

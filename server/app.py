@@ -1,4 +1,5 @@
-from flask import Flask, request
+from flask import Flask, request, send_file
+from flask import make_response
 from flask_cors import CORS
 import psycopg2
 import secrets
@@ -18,12 +19,13 @@ def home():
     result = []
     for row in rows:
         d = {
-            'link': row[0],
-            'user': row[1],
-            'source': row[2],
-            'date': row[3],
-            'caption': row[4],
-            'media': row[5]
+            'postid': row[0],
+            'link': row[1],
+            'user': row[2],
+            'source': row[3],
+            'date': row[4],
+            'caption': row[5],
+            'media_url': row[7],
         }
         result.append(d)
 
@@ -45,6 +47,18 @@ def login():
     password = data['password']
     return 'success'
 
+@app.route('/media/<string:postid>')
+def media(postid):
+    cur.execute(f"SELECT media_path FROM post WHERE postid = '{postid}'")
+    try:
+        result = cur.fetchone()[0]
+        print(result)
+        response = make_response(send_file(result, mimetype='image/png'))
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        return response
+    except:
+        return 'None'
+    
 
 @app.route('/user/<string:username>')
 def info(username):

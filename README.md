@@ -1,39 +1,14 @@
 # Plarza
+[![License: MIT](https://img.shields.io/badge/License-GPL3.0-g.svg)](https://opensource.org/license/gpl-3-0/)
 
 #### Dead simple social media aggregator
+This monorepo contains the client, server and crawler for [plarza.com](https://plarza.com)
 
-### Run with Docker 
+## Install
+
+### Docker 
 ```bash
 docker compose up
-```
-
-## Client
-
-**Install**
-
-```bash
-$ cd client
-$ npm i
-```
-
-**Run**
-
-```bash
-$ npm run dev -- --open
-```
-
-## Server
-
-**Install**
-
-```bash
-$ pip install -r requirements.txt
-```
-
-**Run**
-
-```bash
-flask run --debug
 ```
 
 ## Database

@@ -2,6 +2,11 @@
 
 #### Dead simple social media aggregator
 
+### Run with Docker 
+```bash
+docker compose up
+```
+
 ## Client
 
 **Install**

@@ -10,6 +10,7 @@ This monorepo contains the client, server and crawler for [plarza.com](https://p
 
 ### Docker 
 ```bash
+mv .example.env .env
 docker compose up
 ```
 

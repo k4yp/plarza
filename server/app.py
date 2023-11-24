@@ -8,7 +8,7 @@ import time
 app = Flask(__name__)
 cors = CORS(app)
 
-conn = psycopg2.connect(host='localhost', database='dev', user='dev', port=5432, password='TEM5wbEXkJPfN5QMf7CY5i5k4vtagcpH')
+conn = psycopg2.connect(host='localhost', database='dev', user='dev', port=5432, password='MxTb3D6Kp8TpxxSsRTBMsNvaA2kXpEJr')
 
 cur = conn.cursor()
 

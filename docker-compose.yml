@@ -1,16 +1,18 @@
-version: '3.8'
+version: "3"
 services:
-  db:
+  client:
+    image: k4yp/client
+    ports:
+      - "4173:4173"
+    restart: always
+  postgres:
     image: postgres:latest
     restart: always
     environment:
-      - POSTGRES_DB=dev
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - '5432:5432'
-    volumes: 
-      - db:/var/lib/postgresql/data
-volumes:
-  db:
-    driver: local
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data

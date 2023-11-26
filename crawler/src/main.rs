@@ -1,14 +1,12 @@
 use reqwest;
 
 #[tokio::main]
-async fn main() -> Result<(), reqwest::Error> {
-
+async fn main() {
     let url = "http://localhost:9515/session";
-
+    
     let body = r#"
         {
             "desiredCapabilities": {
-
                 "browserName": "chrome",
                 "goog:chromeOptions": {
                     "args": ["--headless"]
@@ -17,20 +15,23 @@ async fn main() -> Result<(), reqwest::Error> {
         }
     "#;
 
+    match send_request(url, body).await {
+        Ok(response) => println!("Response: {:?}", response),
+        Err(err) => eprintln!("Error: {:?}", err),
+    }
+}
+
+async fn send_request(url: &str, body: &str) -> Result<String, reqwest::Error> {
     let client = reqwest::Client::new();
-    let response = client.post(url)
+
+    let response = client
+        .post(url)
         .header(reqwest::header::CONTENT_TYPE, "application/json")
-        .body(body)
+        .body(body.to_string())
         .send()
         .await?;
 
-    if response.status().is_success() {
-        let response_body = response.text().await?;
-        
-        println!("{}", response_body);
-    } else {
-        println!("Request failed with status code: {}", response.status());
-    }
+    let body = response.text().await?;
 
-    Ok(())
+    Ok(body)
 }

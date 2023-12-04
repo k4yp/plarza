@@ -6,17 +6,10 @@
 #### Dead simple social media aggregator
 This monorepo contains the client, server and crawler for [plarza.com](https://plarza.com)
 
-## Install
+## Installation
 
 ### Docker 
 ```bash
 cp .example.env .env
 docker compose up
-```
-
-## Database
-
-```bash
-psql -U postgres
-\c testdb
 ```

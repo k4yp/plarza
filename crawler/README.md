@@ -1,7 +1,7 @@
 ## Plarza Crawler
 ### Dependencies
- - [ChromeDriver](https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.105/linux64/chromedriver-linux64.zip) 119.0.6045.105 or later
- - [Chrome for Testing](https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/119.0.6045.105/linux64/chrome-linux64.zip) 119.0.6045.105 or later
+ - [ChromeDriver](https://googlechromelabs.github.io/chrome-for-testing) 119.0.6045.105 or later
+ - [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing) 119.0.6045.105 or later
 
 ### Developing
 ```bash

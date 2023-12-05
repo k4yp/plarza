@@ -1,7 +1,11 @@
 ## Plarza Crawler
 ### Dependencies
  - [ChromeDriver](https://googlechromelabs.github.io/chrome-for-testing) 119.0.6045.105 or later
- - [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing) 119.0.6045.105 or later
+ - [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing) 119.0.6045.105 or later  
+    #### (Ubuntu Specific)
+ - [build-essential](https://packages.ubuntu.com/focal/build-essential)
+ - [libasound2](https://packages.ubuntu.com/focal/libasound2)
+ - [libssl-dev](https://packages.ubuntu.com/focal/libssl-dev)
 
 ### Developing
 ```bash

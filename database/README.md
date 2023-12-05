@@ -1,4 +1,4 @@
-# Plarza Database Init Scripts
+## Plarza Database Init Scripts
 ### Connect
 ```bash
 psql -h localhost -p 5432 -U dev -d dev

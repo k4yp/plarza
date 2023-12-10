@@ -12,7 +12,7 @@ const BODY: &str = r#"
     "desiredCapabilities": {
         "browserName": "chrome",
         "goog:chromeOptions": {
-            "args": ["--headless"]
+            "args": ["--headless", "--disable-gpu", "--blink-settings=imagesEnabled=false"]
         }
     }
 }
@@ -31,7 +31,14 @@ async fn main() {
         task::spawn(youtube("noboilerplate")),
         task::spawn(youtube("techwithtim")),
         task::spawn(youtube("letsgetrusty")),
-        task::spawn(youtube("freecodecamp"))
+        task::spawn(youtube("bigboxswe")),
+        task::spawn(youtube("namanhkapur")),
+        task::spawn(youtube("fknight")),
+        task::spawn(youtube("code_report")),
+        task::spawn(youtube("yannickilcher")),
+        task::spawn(youtube("coderized")),
+        task::spawn(youtube("hyperplexed")),
+        task::spawn(youtube("codeaesthetic"))
     ];
 
     for future in futures {
@@ -43,7 +50,7 @@ async fn main() {
 }
 
 async fn youtube(username: &str) -> Option<Vec<String>> {
-    let session = match request(format!("{CHROMEDRIVER_URL}/session").as_str(), BODY).await {
+    let session = match request("POST", format!("{CHROMEDRIVER_URL}/session").as_str(), BODY).await {
         Ok(session) => session,
         Err(err) => err.to_string(),
     };
@@ -51,12 +58,17 @@ async fn youtube(username: &str) -> Option<Vec<String>> {
     let json: Value = serde_json::from_str(&session).unwrap();
     let session_id = json["sessionId"].as_str().unwrap().to_string();
 
-    let _ = match request(&format!("{CHROMEDRIVER_URL}/session/{session_id}/url"), format!("{{\"url\": \"https://youtube.com/@{username}\"}}").as_str()).await {
+    let _ = match request("POST", &format!("{CHROMEDRIVER_URL}/session/{session_id}/url"), format!("{{\"url\": \"https://youtube.com/@{username}\"}}").as_str()).await {
         Ok(response) => response,
         Err(err) => err.to_string(),
     };
 
-    let res = match request(&format!("{CHROMEDRIVER_URL}/session/{session_id}/source"), "").await {
+    let res = match request("GET", &format!("{CHROMEDRIVER_URL}/session/{session_id}/source"), "").await {
+        Ok(response) => response,
+        Err(err) => err.to_string(),
+    };
+
+    let _ = match request("DELETE", &format!("{CHROMEDRIVER_URL}/session/{session_id}"), "").await {
         Ok(response) => response,
         Err(err) => err.to_string(),
     };
@@ -79,16 +91,25 @@ fn parse_urls(res: &str, patterns: Vec<String>) -> Option<Vec<String>> {
     }
 }
 
-async fn request(url: &str, body: &str) -> Result<String, reqwest::Error> {
-    let response = if body != "" {
-        Client::new()
-            .post(url)
-            .header(reqwest::header::CONTENT_TYPE, "application/json")
-            .body(body.to_string())
-            .send()
-            .await?
-    } else {
-        Client::new().get(url).send().await?
+async fn request(method: &str, url: &str, body: &str) -> Result<String, reqwest::Error> {
+    let response = match method {
+        "POST" =>   Client::new()
+                        .post(url)
+                        .header(reqwest::header::CONTENT_TYPE, "application/json")
+                        .body(body.to_string())
+                        .send()
+                        .await?,
+
+        "GET" =>    Client::new()
+                        .get(url)
+                        .send()
+                        .await?,
+
+        "DELETE" => Client::new()
+                        .delete(url)
+                        .send()
+                        .await?,
+        &_ =>       todo!()
     };
 
     let body = response.text().await?;

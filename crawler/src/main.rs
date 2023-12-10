@@ -2,77 +2,55 @@ use reqwest::Client;
 use serde_json::Value;
 use regex::Regex;
 use itertools::Itertools;
-use futures::future;
+use tokio::task;
+use std::process::Command;
 
 const CHROMEDRIVER_URL: &str = "http://localhost:9515";
 
+const BODY: &str = r#"
+{
+    "desiredCapabilities": {
+        "browserName": "chrome",
+        "goog:chromeOptions": {
+            "args": ["--headless"]
+        }
+    }
+}
+"#;
+
 #[tokio::main]
 async fn main() {
-    // let body = r#"
-    //     {
-    //         "desiredCapabilities": {
-    //             "browserName": "chrome"
-    //         }
-    //     }
-    // "#;
+    let mut driver = Command::new("./chromedriver-linux64/chromedriver").spawn().expect("Failed to execute command");
+    
+    let futures = vec![
+        task::spawn(youtube("nickwhite")),
+        task::spawn(youtube("bawad")),
+        task::spawn(youtube("theprimeagen")),
+        task::spawn(youtube("fireship")),
+        task::spawn(youtube("t3dotgg")),
+        task::spawn(youtube("noboilerplate")),
+        task::spawn(youtube("techwithtim")),
+        task::spawn(youtube("letsgetrusty")),
+        task::spawn(youtube("freecodecamp"))
+    ];
 
-    let body = r#"
-        {
-            "desiredCapabilities": {
-                "browserName": "chrome",
-                "goog:chromeOptions": {
-                    "args": ["--headless"]
-                }
-            }
-        }
-    "#;
+    for future in futures {
+        let result = future.await.expect("Task panicked");
+        println!("{:?}", result.unwrap());
+    }
 
-    let session = match request(format!("{CHROMEDRIVER_URL}/session").as_str(), body).await {
+    driver.kill().expect("Failed to kill chromedriver");
+}
+
+async fn youtube(username: &str) -> Option<Vec<String>> {
+    let session = match request(format!("{CHROMEDRIVER_URL}/session").as_str(), BODY).await {
         Ok(session) => session,
         Err(err) => err.to_string(),
     };
 
     let json: Value = serde_json::from_str(&session).unwrap();
-    let session_id = json["sessionId"].as_str().unwrap();
+    let session_id = json["sessionId"].as_str().unwrap().to_string();
 
-
-    let session2 = match request(format!("{CHROMEDRIVER_URL}/session").as_str(), body).await {
-        Ok(session) => session,
-        Err(err) => err.to_string(),
-    };
-
-    let json: Value = serde_json::from_str(&session2).unwrap();
-    let session_id2 = json["sessionId"].as_str().unwrap();
-
-    let session3 = match request(format!("{CHROMEDRIVER_URL}/session").as_str(), body).await {
-        Ok(session) => session,
-        Err(err) => err.to_string(),
-    };
-
-    let json: Value = serde_json::from_str(&session3).unwrap();
-    let session_id3 = json["sessionId"].as_str().unwrap();
-
-    let session4 = match request(format!("{CHROMEDRIVER_URL}/session").as_str(), body).await {
-        Ok(session) => session,
-        Err(err) => err.to_string(),
-    };
-
-    let json: Value = serde_json::from_str(&session4).unwrap();
-    let session_id4 = json["sessionId"].as_str().unwrap();
-
-    let futures = vec![
-                        youtube("nickwhite", session_id),
-                        youtube("bawad", session_id2), 
-                        youtube("theprimeagen", session_id3),
-                        youtube("fireship", session_id4)
-                    ];
-
-    let urls = future::join_all(futures).await;
-
-    println!("{:?}", urls);
-}
-
-async fn youtube(username: &str, session_id: &str) -> Option<Vec<String>> {
     let _ = match request(&format!("{CHROMEDRIVER_URL}/session/{session_id}/url"), format!("{{\"url\": \"https://youtube.com/@{username}\"}}").as_str()).await {
         Ok(response) => response,
         Err(err) => err.to_string(),

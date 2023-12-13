@@ -5,6 +5,7 @@ use sqlx::PgPool;
 use chrono::Utc;
 use dotenv_codegen::dotenv;
 use base64::{Engine, engine::general_purpose};
+use bcrypt::{hash, verify, DEFAULT_COST};
 
 #[derive(Deserialize, Debug, sqlx::FromRow)]
 struct Signup {
@@ -13,10 +14,11 @@ struct Signup {
     password: String
 }
 
-#[derive(Deserialize, sqlx::FromRow)]
+#[derive(Deserialize, Debug, sqlx::FromRow)]
 struct Login {
     username: String,
-    password: String
+    password: String,
+    salt: Option<String>
 }
 
 // #[derive(Serialize, Deserialize, sqlx::FromRow)]
@@ -26,7 +28,7 @@ struct Login {
 //     email: Option<String>,
 //     bio: Option<String>,
 //     display: Option<String>,
-//     media: Option<String>
+//     pfp: Option<String>
 // }
 
 #[derive(Serialize, Debug, Deserialize, sqlx::FromRow)]
@@ -37,7 +39,7 @@ struct Post {
     date: Option<i64>,
     caption: Option<String>,
     media_path: Option<String>,
-    media_link: Option<String>
+    media_url: Option<String>
 }    
 
 #[get("/")]
@@ -47,12 +49,18 @@ async fn index() -> impl Responder {
 
 #[post("/signup")]
 async fn signup(body: web::Json<Signup>, pool: web::Data<PgPool>) -> impl Responder {
+    let salt: Vec<u8> = (0..64).map(|_| rand::random::<u8>()).collect();
+    let salt_base64 = general_purpose::URL_SAFE_NO_PAD.encode(&salt);
+
+    let password_hash = hash(format!("{}{}",salt_base64, &body.password), DEFAULT_COST).expect("Failed to hash password");
+
     let time = Utc::now().timestamp();
 
-    let result = sqlx::query(r#"INSERT INTO "user" (username, email, password, date) VALUES ($1, $2, $3, $4)"#)
+    let result = sqlx::query(r#"INSERT INTO "user" (username, email, password, salt, date) VALUES ($1, $2, $3, $4, $5)"#)
         .bind(&body.username)
         .bind(&body.email)
-        .bind(&body.password)
+        .bind(password_hash)
+        .bind(salt_base64)
         .bind(time)
         .execute(pool.get_ref())
         .await;
@@ -65,22 +73,23 @@ async fn signup(body: web::Json<Signup>, pool: web::Data<PgPool>) -> impl Respon
 
 #[post("/login")]
 async fn login(body: web::Json<Login>, pool: web::Data<PgPool>) -> impl Responder {
-    let result = sqlx::query_as::<_, Login>(r#"SELECT username, password FROM "user" WHERE username = $1 AND password = $2"#)
+    let result = sqlx::query_as::<_, Login>(r#"SELECT * FROM "user" WHERE username = $1"#)
         .bind(&body.username)
-        .bind(&body.password)
-        .fetch_optional(pool.get_ref())
+        .fetch_one(pool.get_ref())
         .await;
 
     match result {
-        Ok(Some(user)) => {
-            if body.password == user.password {
+        Ok(user) => {
+            let salt_base64 = user.salt.unwrap_or_default();
+            let password = format!("{}{}", salt_base64, &body.password);
+
+            if verify(&password, &user.password).unwrap_or(false) {
                 HttpResponse::Ok().body(format!("Login Successful {}", body.username))
             } else {
-                HttpResponse::Unauthorized().body("Invalid password")
+                HttpResponse::Unauthorized().finish()
             }
         }
-        Ok(None) => HttpResponse::NotFound().body("User not found"),
-        Err(_) => HttpResponse::InternalServerError().finish(),
+        Err(_) => HttpResponse::Unauthorized().finish(),
     }
 }
 
@@ -113,14 +122,14 @@ async fn posts_create(body: web::Json<Post>, pool: web::Data<PgPool>) -> impl Re
     let random_bytes: Vec<u8> = (0..12).map(|_| rand::random::<u8>()).collect();
     let url_id = general_purpose::URL_SAFE_NO_PAD.encode(&random_bytes);
 
-    let result = sqlx::query(r#"INSERT INTO "post" (url_id, user_id, source, date, caption, media_path, media_link) VALUES ($1, $2, $3, $4, $5, $6, $7)"#)
+    let result = sqlx::query(r#"INSERT INTO "post" (url_id, user_id, source, date, caption, media_path, media_url) VALUES ($1, $2, $3, $4, $5, $6, $7)"#)
         .bind(url_id.clone())
         .bind(&body.user_id)
         .bind(&body.source)
         .bind(time)
         .bind(&body.caption)
         .bind(&body.media_path)
-        .bind(&body.media_link)
+        .bind(&body.media_url)
         .execute(pool.get_ref())
         .await;
 

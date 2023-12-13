@@ -3,10 +3,11 @@ CREATE TABLE "user" (
     "username" VARCHAR(32) UNIQUE NOT NULL,
     "email" VARCHAR(128) NOT NULL,
     "password" VARCHAR(256) NOT NULL,
+    "salt" VARCHAR(256) NOT NULL,
     "bio" VARCHAR(256),
     "date" BIGINT NOT NULL,
     "display" VARCHAR(32),
-    "media" VARCHAR(256)
+    "pfp" VARCHAR(256)
 );
 
 CREATE TABLE "post" (
@@ -17,7 +18,7 @@ CREATE TABLE "post" (
     "date" BIGINT NOT NULL,
     "caption" TEXT NOT NULL,
     "media_path" TEXT,
-    "media_link" TEXT
+    "media_url" TEXT
 );
 
 CREATE TABLE "feed" (
@@ -25,6 +26,6 @@ CREATE TABLE "feed" (
     "username" VARCHAR(32) NOT NULL,
     "desc" VARCHAR(256),
     "display" VARCHAR(32),
-    "media" VARCHAR(256),
+    "pfp" VARCHAR(256),
     "followers" INT DEFAULT 0
 );

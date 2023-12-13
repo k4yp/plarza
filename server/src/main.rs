@@ -57,8 +57,6 @@ async fn signup(body: web::Json<Signup>, pool: web::Data<PgPool>) -> impl Respon
         .execute(pool.get_ref())
         .await;
 
-    println!("{:?}", result);
-
     match result {
         Ok(_) => HttpResponse::Ok().body(format!("Welcome {}!", body.username)),
         Err(_) => HttpResponse::InternalServerError().finish(),
@@ -102,8 +100,6 @@ async fn posts(body: web::Json<Post>, pool: web::Data<PgPool>) -> impl Responder
         }
     };
 
-    println!("{:?}", result);
-
     match result {
         Ok(post) => HttpResponse::Ok().json(post),
         Err(_) => HttpResponse::InternalServerError().finish(),
@@ -118,7 +114,7 @@ async fn posts_create(body: web::Json<Post>, pool: web::Data<PgPool>) -> impl Re
     let url_id = general_purpose::URL_SAFE_NO_PAD.encode(&random_bytes);
 
     let result = sqlx::query(r#"INSERT INTO "post" (url_id, user_id, source, date, caption, media_path, media_link) VALUES ($1, $2, $3, $4, $5, $6, $7)"#)
-        .bind(url_id)
+        .bind(url_id.clone())
         .bind(&body.user_id)
         .bind(&body.source)
         .bind(time)
@@ -128,16 +124,18 @@ async fn posts_create(body: web::Json<Post>, pool: web::Data<PgPool>) -> impl Re
         .execute(pool.get_ref())
         .await;
 
-    println!("{:?}", result);
-
     match result {
-        Ok(_) => HttpResponse::Ok().body(format!("Post created")),
+        Ok(_) => {
+            HttpResponse::Ok().body(format!("Post created"))
+        }
         Err(_) => HttpResponse::InternalServerError().finish(),
     }
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    env_logger::init();
+
     let url = format!("postgres://{}:{}@localhost:5432/{}",
                         dotenv!("POSTGRES_USER"),
                         dotenv!("POSTGRES_PASSWORD"),

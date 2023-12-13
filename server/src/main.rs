@@ -20,18 +20,18 @@ struct Signup {
 struct Login {
     username: String,
     password: String,
-    salt: Option<String> //Option?
+    salt: Option<String>
 }
 
-// #[derive(Serialize, Deserialize, sqlx::FromRow)]
-// struct User {
-//     username: Option<String>,
-//     password: Option<String>,
-//     email: Option<String>,
-//     bio: Option<String>,
-//     display: Option<String>,
-//     pfp: Option<String>
-// }
+#[derive(Serialize, Deserialize, sqlx::FromRow)]
+struct User {
+    username: Option<String>,
+    password: Option<String>,
+    email: Option<String>,
+    bio: Option<String>,
+    display: Option<String>,
+    pfp: Option<String>
+}
 
 #[derive(Serialize, Debug, Deserialize, sqlx::FromRow)]
 struct Post {
@@ -72,6 +72,19 @@ async fn signup(body: web::Json<Signup>, pool: web::Data<PgPool>) -> impl Respon
     }
 }
 
+#[get("/user")]
+async fn user(body: web::Json<User>, pool: web::Data<PgPool>) -> impl Responder {
+    let result = sqlx::query_as::<_, User>(r#"SELECT * FROM "user" WHERE username = $1"#)
+        .bind(&body.username)
+        .fetch_one(pool.get_ref())
+        .await;
+
+    match result {
+        Ok(user) => HttpResponse::Ok().json(user),
+        Err(_) => HttpResponse::InternalServerError().finish(),
+    }
+}
+
 #[post("/login")]
 async fn login(body: web::Json<Login>, pool: web::Data<PgPool>) -> impl Responder {
     let result = sqlx::query_as::<_, Login>(r#"SELECT * FROM "user" WHERE username = $1"#)
@@ -80,12 +93,12 @@ async fn login(body: web::Json<Login>, pool: web::Data<PgPool>) -> impl Responde
         .await;
 
     match result {
-        Ok(user) => {
-            let salt = user.salt.unwrap();
+        Ok(login) => {
+            let salt = login.salt.unwrap();
             let salt_string = SaltString::from_b64(&salt).unwrap();
             let password_hash = Argon2::default().hash_password(&body.password.as_bytes(), salt_string.as_salt()).unwrap();
 
-            if user.password == password_hash.to_string() {
+            if login.password == password_hash.to_string() {
                 HttpResponse::Ok().body(format!("Login Successful {}", body.username))
             } else {
                 HttpResponse::Unauthorized().finish()
@@ -162,6 +175,7 @@ async fn main() -> std::io::Result<()> {
             .service(index)
             .service(signup)
             .service(login)
+            .service(user)
             .service(posts)
             .service(posts_create)
     })

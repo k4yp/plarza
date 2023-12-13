@@ -145,9 +145,6 @@ async fn posts_create(body: web::Json<Post>, pool: web::Data<PgPool>) -> impl Re
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-
-    
-
     env_logger::init();
 
     let url = format!("postgres://{}:{}@localhost:5432/{}",

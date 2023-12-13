@@ -7,12 +7,13 @@ edition = "2021"
 
 [dependencies]
 actix-web = "4.4.0"
+argon2 = "0.5.2"
 base64 = "0.21.5"
-bcrypt = "0.15.0"
 chrono = "0.4.31"
 dotenv_codegen = "0.15.0"
 env_logger = "0.10.1"
 log = "0.4.20"
+password-hash = "0.5.0"
 rand = "0.8.5"
 serde = { version = "1.0.193", features = ["derive"] }
 sqlx = { version = "0.7.3", features = ["postgres", "runtime-tokio-rustls"] }

@@ -5,7 +5,9 @@ use sqlx::PgPool;
 use chrono::Utc;
 use dotenv_codegen::dotenv;
 use base64::{Engine, engine::general_purpose};
-use bcrypt::{hash, verify, DEFAULT_COST};
+
+use password_hash::{SaltString, PasswordHasher};
+use argon2::Argon2;
 
 #[derive(Deserialize, Debug, sqlx::FromRow)]
 struct Signup {
@@ -18,7 +20,7 @@ struct Signup {
 struct Login {
     username: String,
     password: String,
-    salt: Option<String>
+    salt: Option<String> //Option?
 }
 
 // #[derive(Serialize, Deserialize, sqlx::FromRow)]
@@ -49,18 +51,17 @@ async fn index() -> impl Responder {
 
 #[post("/signup")]
 async fn signup(body: web::Json<Signup>, pool: web::Data<PgPool>) -> impl Responder {
-    let salt: Vec<u8> = (0..64).map(|_| rand::random::<u8>()).collect();
-    let salt_base64 = general_purpose::URL_SAFE_NO_PAD.encode(&salt);
+    let salt = SaltString::generate(&mut rand::thread_rng());
 
-    let password_hash = hash(format!("{}{}",salt_base64, &body.password), DEFAULT_COST).expect("Failed to hash password");
+    let password_hash = Argon2::default().hash_password(&body.password.as_bytes(), salt.as_salt()).unwrap();
 
     let time = Utc::now().timestamp();
 
     let result = sqlx::query(r#"INSERT INTO "user" (username, email, password, salt, date) VALUES ($1, $2, $3, $4, $5)"#)
         .bind(&body.username)
         .bind(&body.email)
-        .bind(password_hash)
-        .bind(salt_base64)
+        .bind(password_hash.to_string())
+        .bind(salt.to_string())
         .bind(time)
         .execute(pool.get_ref())
         .await;
@@ -80,10 +81,11 @@ async fn login(body: web::Json<Login>, pool: web::Data<PgPool>) -> impl Responde
 
     match result {
         Ok(user) => {
-            let salt_base64 = user.salt.unwrap_or_default();
-            let password = format!("{}{}", salt_base64, &body.password);
+            let salt = user.salt.unwrap();
+            let salt_string = SaltString::from_b64(&salt).unwrap();
+            let password_hash = Argon2::default().hash_password(&body.password.as_bytes(), salt_string.as_salt()).unwrap();
 
-            if verify(&password, &user.password).unwrap_or(false) {
+            if user.password == password_hash.to_string() {
                 HttpResponse::Ok().body(format!("Login Successful {}", body.username))
             } else {
                 HttpResponse::Unauthorized().finish()
@@ -143,6 +145,9 @@ async fn posts_create(body: web::Json<Post>, pool: web::Data<PgPool>) -> impl Re
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+
+    
+
     env_logger::init();
 
     let url = format!("postgres://{}:{}@localhost:5432/{}",

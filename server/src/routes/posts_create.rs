@@ -23,8 +23,6 @@ pub async fn posts_create(body: web::Json<Post>, pool: web::Data<PgPool>) -> imp
         .execute(pool.get_ref())
         .await;
 
-    println!("{:?}", result);
-
     match result {
         Ok(_) => {
             HttpResponse::Ok().body(format!("Post created"))

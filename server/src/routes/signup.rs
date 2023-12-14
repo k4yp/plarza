@@ -23,8 +23,6 @@ pub async fn signup(body: web::Json<User>, pool: web::Data<PgPool>) -> impl Resp
         .execute(pool.get_ref())
         .await;
 
-    println!("{:?}", result);
-
     match result {
         Ok(_) => HttpResponse::Ok().body(format!("Welcome {:?}!", body.username)),
         Err(_) => HttpResponse::InternalServerError().finish(),

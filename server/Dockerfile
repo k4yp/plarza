@@ -1,6 +1,6 @@
 FROM rust:latest
 
-COPY ./ ./
+COPY . .
 
 RUN cargo build --release
 

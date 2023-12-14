@@ -3,8 +3,7 @@ use sqlx::PgPool;
 use chrono::Utc;
 use base64::{Engine, engine::general_purpose};
 
-use crate::models;
-use models::post::Post;
+use crate::models::post::Post;
 
 #[post("/posts")]
 pub async fn posts_create(body: web::Json<Post>, pool: web::Data<PgPool>) -> impl Responder {

@@ -1,8 +1,7 @@
 use actix_web::{get, web, HttpResponse, Responder};
 use sqlx::PgPool;
 
-use crate::models;
-use models::post::Post;
+use crate::models::post::Post;
 
 #[get("/posts")]
 async fn posts(body: web::Json<Post>, pool: web::Data<PgPool>) -> impl Responder {

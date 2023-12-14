@@ -4,8 +4,7 @@ use sqlx::PgPool;
 use password_hash::{SaltString, PasswordHasher};
 use argon2::Argon2;
 
-use crate::models;
-use models::user::User;
+use crate::models::user::User;
 
 #[post("/login")]
 pub async fn login(body: web::Json<User>, pool: web::Data<PgPool>) -> impl Responder {

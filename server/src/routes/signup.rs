@@ -4,11 +4,10 @@ use chrono::Utc;
 use password_hash::{SaltString, PasswordHasher};
 use argon2::Argon2;
 
-use crate::models;
-use models::user::User;
+use crate::models::user::User;
 
 #[post("/signup")]
-async fn signup(body: web::Json<User>, pool: web::Data<PgPool>) -> impl Responder {
+pub async fn signup(body: web::Json<User>, pool: web::Data<PgPool>) -> impl Responder {
     let salt = SaltString::generate(&mut rand::thread_rng());
 
     let password_hash = Argon2::default().hash_password(body.password.as_ref().unwrap().as_bytes(), salt.as_salt()).unwrap();

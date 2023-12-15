@@ -1,4 +1,4 @@
-<img src="./src/logo.png" alt="logo" width="256"/>
+<img src="./src/plarza.png" alt="logo" width="256"/>
 
 # Plarza
 [![License: MIT](https://img.shields.io/badge/License-GPL3.0-g.svg)](https://opensource.org/license/gpl-3-0/)

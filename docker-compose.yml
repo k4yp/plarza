@@ -5,11 +5,6 @@ services:
     ports:
       - "4173:4173"
     restart: always
-  # server:
-  #   image: k4yp/server
-  #   ports:
-  #     - "8080:8080"
-  #   restart: always
   postgres:
     image: postgres:latest
     restart: always
@@ -22,6 +17,19 @@ services:
     volumes:
       -  postgres_db:/var/lib/postgresql/data
       - ./database:/docker-entrypoint-initdb.d
+    networks:
+      static-network:
+        ipv4_address: 172.20.0.3
+  server:
+    image: k4yp/server
+    ports:
+      - "8080:8080"
+    restart: always
 volumes:
   postgres_db:
     driver: local
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

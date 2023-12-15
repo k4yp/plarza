@@ -21,7 +21,7 @@ async fn index() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     env_logger::init();
 
-    let url = format!("postgres://{}:{}@localhost:5432/{}",
+    let url = format!("postgres://{}:{}@172.20.0.3:5432/{}",
                         dotenv!("POSTGRES_USER"),
                         dotenv!("POSTGRES_PASSWORD"),
                         dotenv!("POSTGRES_DB"));
@@ -29,6 +29,8 @@ async fn main() -> std::io::Result<()> {
     let pool = PgPool::connect(&url)
         .await
         .expect("Failed to connect to the database.");
+
+    println!("Connected to the database");
 
     HttpServer::new(move || {
         App::new()
@@ -40,7 +42,7 @@ async fn main() -> std::io::Result<()> {
             .service(posts)
             .service(posts_create)
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
 }

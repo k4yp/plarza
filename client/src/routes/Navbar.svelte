@@ -1,70 +1,73 @@
 <div class="header">
-    <h1 class="logo">✱</h1>
+    <img class="logo" src="plarza.png" alt="logo" >
     <input class="search" placeholder="search...">
-    <a href="/" class="plarza">plarza.com</a>
-    <a href="./signup" class="signup">sign up</a>
-    <a href="./login" class="login">login</a> 
+    <a href="./login" class="login">Login</a> 
+    <a href="./signup" class="signup">Sign Up</a>
 </div>
 
 <style>
-    .header{
-        padding-top: 10px;
-        font-family: "Courier Prime", monospace;
-    }
-    .search{
-        font-family: "Courier Prime", monospace;
-        position: absolute;
-        left: 256px;
-        background: unset;
-        top: 17px;
+    .header {
+        margin-top: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 10%;
+        height: 50px;
+        font-family: Inter;
         font-size: 16px;
-        border: none;
+    }
+
+    .logo {
+        height: 75%;
+    }
+
+    .search {
+        background-color: unset;
+        font-family: Inter;
+        font-weight: 600;
+        font-size: 16px;
+        color: #051728;
+        width: 25%;
+        padding: 5px;
+        padding-left: 32px;
+        margin: auto;
+        border: 2px solid #051728;
+        border-radius: 32px;
+    }
+
+    .search::placeholder {
+        color: #6a7885;
+    }
+
+    .search:focus {
         outline: none;
     }
-    .logo {
-        padding: 0;
-        margin: 0;
-        font-size: 32px;
+
+    .signup {
+        width: 80px;
         height: 32px;
-        position: absolute;
-        left: 20px;
-        color: #00ff00;
-        text-shadow: 3px 3px #ff0000;
-    }
-    .plarza{
-        padding: 0;
-        margin: 0;
-        top: 16px;
-        left: 64px;
-        font-size: 20px;
-        position: absolute;
+        text-align: center;
         text-decoration: none;
-        color:black;
-        font-weight: bold;
-    }
-    .plarza:hover{
-        text-decoration: underline;
-    }
-    .signup{
-        text-decoration: none;
+        font-weight:bolder;
         font-size: 16px;
-        margin: 0;
-        position: absolute;
-        right:128px;
-        color:#0000ff;
+        color: #051728;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid #051728;
+        background-color:#7fff00;
+        border-radius: 32px;
     }
-    .login{
-        color: black;
-        text-decoration: none;
+
+    .login {
+        padding: 8px;
+        margin: 16px;
+        width: 64px;
+        font-weight: 800;
         font-size: 16px;
-        margin: 0;
-        position: absolute;
-        right:32px;
-    }
-    .login:hover{
-        text-decoration: underline;
-    }
-    .signup:hover{
-        text-decoration: underline;
+        color: #051728;
+        text-align: center;
+        cursor: pointer; 
+        text-decoration: none;
     }
 </style>

@@ -21,18 +21,15 @@ async fn index() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     env_logger::init();
 
-    let url = format!("postgres://{}:{}@172.20.0.3:5432/{}",
+    let url = format!("postgres://{}:{}@{}:5432/{}",
                         dotenv!("POSTGRES_USER"),
                         dotenv!("POSTGRES_PASSWORD"),
+                        dotenv!("POSTGRES_IP"),
                         dotenv!("POSTGRES_DB"));
-
-    println!("Connecting to the database: {}", url);
 
     let pool = PgPool::connect(&url)
         .await
         .expect("Failed to connect to the database.");
-
-    println!("Connected to the database");
 
     HttpServer::new(move || {
         App::new()

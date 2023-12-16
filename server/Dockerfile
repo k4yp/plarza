@@ -1,6 +1,7 @@
 FROM rust:latest
 
-COPY . .
+COPY .env .
+COPY ./server .
 
 RUN cargo build --release
 

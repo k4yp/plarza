@@ -26,6 +26,8 @@ async fn main() -> std::io::Result<()> {
                         dotenv!("POSTGRES_PASSWORD"),
                         dotenv!("POSTGRES_DB"));
 
+    println!("Connecting to the database: {}", url);
+
     let pool = PgPool::connect(&url)
         .await
         .expect("Failed to connect to the database.");

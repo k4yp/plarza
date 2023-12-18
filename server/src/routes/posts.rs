@@ -1,9 +1,9 @@
-use actix_web::{get, web, HttpResponse, Responder};
+use actix_web::{post, web, HttpResponse, Responder};
 use sqlx::PgPool;
 
 use crate::models::post::Post;
 
-#[get("/posts")]
+#[post("/posts")]
 async fn posts(body: web::Json<Post>, pool: web::Data<PgPool>) -> impl Responder {
     let mut conditions = Vec::new();
 

@@ -31,12 +31,13 @@
         padding: 5px;
         padding-left: 32px;
         margin: auto;
-        border: 2px solid #051728;
+        border: none;
+        background-color: #E1DACB;
         border-radius: 32px;
     }
 
     .search::placeholder {
-        color: #6a7885;
+        color: #746f64;
     }
 
     .search:focus {
@@ -54,7 +55,6 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        border: 2px solid #051728;
         background-color:#7fff00;
         border-radius: 32px;
     }

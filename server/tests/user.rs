@@ -18,7 +18,7 @@ async fn test_user_route() {
     });
 
     let req = app
-        .get("/user")
+        .post("/user")
         .send_json(&payload)
         .await
         .unwrap();

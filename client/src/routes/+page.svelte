@@ -1,15 +1,24 @@
 <script>
     import { onMount } from 'svelte';
-  
+
     let posts = [];
-  
+
     const loadPosts = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:5000/posts');
+        try {
+            const data = {
+                user_id: 1
+            };
+            const response = await fetch('http://172.20.0.4:8080/posts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
         posts = await response.json();
-      } catch (error) {
-        console.error(error);
-      }
+        } catch (error) {
+            console.error(error);
+        }
     };
   
     onMount(loadPosts);
@@ -21,13 +30,13 @@
         <div class="post">
             <a href={post.link} target="_blank">
                 <div class="post-header">
-                <a href={`https://${post.source}.com/${post.user}`} target="_blank" class="user">@{post.user}@{post.source}.com</a>
+                <a href={`https://${post.source}/${post.username}`} target="_blank" class="user">@{post.username}@{post.source}</a>
                 </div>
     
                 <div class="content">
                 {#if post.media_url !== null}
                     <div class="media-container">
-                    <img src={`http://127.0.0.1:5000/media/${post.postid}`} class="media" alt="{post.source} media"/>
+                    <img src={`http://0.0.0.0:8080/media/${post.post_id}`} class="media" alt="{post.source} media"/>
                     </div>
                 {/if}
     

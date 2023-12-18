@@ -1,9 +1,9 @@
-use actix_web::{get, web, HttpResponse, Responder};
+use actix_web::{post, web, HttpResponse, Responder};
 use sqlx::PgPool;
 
 use crate::models::user::User;
 
-#[get("/user")]
+#[post("/user")]
 pub async fn user(body: web::Json<User>, pool: web::Data<PgPool>) -> impl Responder {
     let result = sqlx::query_as::<_, User>(r#"SELECT * FROM "user" WHERE username = $1"#)
         .bind(&body.username)

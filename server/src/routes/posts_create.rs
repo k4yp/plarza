@@ -5,7 +5,7 @@ use base64::{Engine, engine::general_purpose};
 
 use crate::models::post::Post;
 
-#[post("/posts")]
+#[post("/posts_create")]
 pub async fn posts_create(body: web::Json<Post>, pool: web::Data<PgPool>) -> impl Responder {
     let time = Utc::now().timestamp();
     

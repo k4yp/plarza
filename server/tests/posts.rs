@@ -18,7 +18,7 @@ async fn test_posts_route() {
     });
 
     let req = app
-        .get("/posts")
+        .post("/posts")
         .send_json(&payload)
         .await
         .unwrap();

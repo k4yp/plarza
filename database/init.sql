@@ -30,5 +30,13 @@ CREATE TABLE "post" (
     "media_url" TEXT
 );
 
+CREATE TABLE "connections" (
+    "connection_id" SERIAL PRIMARY KEY NOT NULL,
+    "user_id" INTEGER REFERENCES "user"("user_id"),
+    "feed_id" INTEGER REFERENCES "feed"("feed_id"),
+    "source" VARCHAR(32) NOT NULL,
+    "date" BIGINT NOT NULL
+);
+
 INSERT INTO "user" ("username", "email", "password", "salt", "date")
 VALUES ('test', 'test@plarza.com', '$argon2id$v=19$m=19456,t=2,p=1$gkc15RVOcVHKXDYGvZMcww$d+V7MsxUnGNXzMzcAK/vEhqXKkLJjrmsn/cxWR2sJ3g', 'gkc15RVOcVHKXDYGvZMcww', 1700000000);

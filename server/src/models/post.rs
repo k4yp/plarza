@@ -7,6 +7,5 @@ pub struct Post {
     pub source: Option<String>,
     pub date: Option<i64>,
     pub caption: Option<String>,
-    pub media_path: Option<String>,
     pub media_url: Option<String>
 }
